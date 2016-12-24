@@ -1,13 +1,17 @@
 import  React, { Component }  from 'react';
 import '../style/index';
+
+
 const FunctionComponent = ({x,y,z,f}) => (
   <div>
     {x} + {y}  + {z}
   </div>
-);
+);   //这是一个无状态组件,要记住定义在类前面
 
-const label = {x:1,y:2,z:3}
-class App extends Component{
+const label = {x:1,y:2,z:3};
+
+
+export default class App extends Component{
   render(){
     return (
       <div className="test">
@@ -25,4 +29,3 @@ class App extends Component{
   }
 }
 
-export default App;
