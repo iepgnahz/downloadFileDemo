@@ -9,7 +9,7 @@ const fontAwesome = path.resolve(__dirname, 'node_modules/font-awesome/css/font-
 let config = {
   entry: {
     index: ['./main.js'],
-    vendors: ['react','react-dom',bootstrap,fontAwesome]
+    vendors: ['react','react-dom','webpack-hot-middleware/client',bootstrap,fontAwesome]
   },
 
   output: {
@@ -18,7 +18,7 @@ let config = {
   },
 
   module: {
-    noParse: [bootstrap,fontAwesome,'react','react-dom'],
+
     loaders: [
       {
         test: /\.js$/,
@@ -43,7 +43,7 @@ let config = {
     ]
   },
 
-  devtool: "#cheap-source-map",
+  devtool: "#cheap-module-eval-source-map",
 
   plugins: [
     new HtmlWebpackPlugin({
@@ -52,7 +52,9 @@ let config = {
       inject: true
     }),
     new webpack.optimize.CommonsChunkPlugin('vendors', 'vendor.js'),
-    new ExtractTextPlugin("[name].css")
+    new ExtractTextPlugin("[name].css"),
+    new webpack.optimize.OccurrenceOrderPlugin(),
+    new webpack.HotModuleReplacementPlugin()
   ],
 
   resolve: {
@@ -60,4 +62,4 @@ let config = {
   }
 };
 
-module.exports = config;
+module.exports =  config;
