@@ -1,68 +1,73 @@
-import React, {Component} from 'react';
+import React, {Component,PropTypes} from 'react';
 import '../style/index.css';
-let dom = window.document;
 export default class Popup extends Component {
   constructor(props){
     super(props);
-    let self = this;
-    dom.addEventListener('mousemove', function (e) {self.onMouseMove(e)})
-    dom.addEventListener('mouseup', function (e) {self.onMouseUp(e)})
-
     this.state={
-      status:'block',
-      left:0,
-      top:0,
-      startLeft:0,
-      startTop:0,
-      disX:0,
-      disY:0,
-      ready:false
+      disX: 0,
+      disY: 0,
+      top: 0,
+      left: 0
     }
   }
 
-  onMouseDown(e) {
-    var x = e.clientX,
-      y = e.clientY
-    this.setState({ready: true, x: x, y: y, startLeft: this.state.left, startTop: this.state.top})
-  }
-
-  onMouseMove(e) {
-
-    if (!this.state.ready) {return}
-
-    let x = e.clientX,
-      y = e.clientY;
+  onMouseMove(x,y){
+    console.log(document.documentElement.clientHeight)
+    let left = x-this.state.disX;
+    let top = y- this.state.disY;
+    if(left<0){
+      left= 0;
+    }
+    if(top<0){
+      top=0;
+    }
+    if((left+200)> document.body.clientWidth){
+      left= document.body.clientWidth-200;
+    }
+    if((top+200)> document.documentElement.clientHeight){
+      top= (document.documentElement.clientHeight)-200;
+    }
     this.setState({
-      left: this.state.startLeft+x-this.state.x,
-      top: this.state.startTop + y - this.state.y
+      left,
+      top
     })
   }
 
-  onMouseUp(e){
-    console.log('upshijian ')
-    console.log(e.target)
-    if(this.refs.popup !== e.target && this.state.status === 'block'){
-      this.props.change(e);
-    }
-    this.setState({ready: false})
+
+  componentDidMount(){
+    const self = this;
+    this.div.addEventListener('mousedown',(e)=>{self.getLocation(e,self)});
   }
 
-  show() {
-    this.setState({status: 'block'})
-  }
+  getLocation(e,self){
+    let x = e.clientX;
+    let y = e.clientY;
+    let boxLeft = parseFloat(self.div.style.left);
+    let boxTop = parseFloat(self.div.style.top);
 
-  hide() {
-    this.setState({status: 'none'})
-  }
+    self.setState({
+      disX: x-boxLeft,
+      disY: y-boxTop
+    },()=>{
+      this.props.dragEnable();
+    })
+  }  //ok
+
 
   render() {
-    var style = {
-      left: this.state.left,
-      top: this.state.top,
-      display: this.state.status
+    let style={
+      top:this.state.top+'px',
+      left:this.state.left+'px'
     };
+
     return (
-      <div ref="popup" onMouseDown={this.onMouseDown.bind(this)} className="popup" style={style} >Drag Me</div>
+      <div className="popup"
+           ref={(ref)=>{
+             this.div = ref
+           }}
+           style={style}
+      >Drag Me</div>
     )
   }
 }
+

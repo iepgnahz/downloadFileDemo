@@ -1,51 +1,50 @@
 import React, {Component} from 'react';
-import Popup from './ClickBtn';
-import ClickBtn from './ClickBtn';
+let dom = window.document;
+import Popup from './Popup';
 export default class DragDemo extends Component {
   constructor(props) {
     super(props);
-    this.state={
-      status:'off'
+    let self = this;
+    dom.addEventListener('mousemove', (e) => {
+      self.mouseMove(e, self)
+    });
+    dom.addEventListener('mouseup', () => {
+      self.mouseUp(self)
+    });
+    this.state = {
+      isDragged: false
     }
-
-
   }
 
-  change(e){
-    if(this.button !== e.target){
-      this.toggle();
-    }
-  }
-
-  onClick(){
-    this.toggle();
-  }
-
-  toggle(){
+  dragEnable() {
     this.setState({
-      status: this.state.status === 'on' ? 'off' : 'on'
-    },()=>{
-      if(this.state.status === 'on'){
-        this.button.on();
-        this.popUp.show();
-      }else {
-        this.button.off();
-        this.popUp.hide();
-      }
+      isDragged: true
     })
   }
 
-  render(){
+  mouseMove(e, self) {
+    if (this.state.isDragged) {
+      self.popUp.onMouseMove(e.clientX, e.clientY)
+    }
+  }
+
+  mouseUp(self) {
+    self.setState({
+      isDragged: false
+    })
+
+  }
+
+  render() {
     return (
-      <div className="component">
-        <div onClick={this.onClick.bind(this)} >
-          <ClickBtn ref={(ref)=>{
-            this.button = ref;
-          }} status={this.state.status} />
-        </div>
-        <Popup ref={(ref)=>{
+      <div>
+        <Popup ref={(ref) => {
           this.popUp = ref;
-        }} change={this.change.bind(this)} />
+        }}
+               dragEnable={() => {
+                 this.dragEnable()
+               }}
+        />
       </div>
     )
   }
